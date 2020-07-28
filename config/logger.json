@@ -1,0 +1,48 @@
+{
+    "appenders": {
+    "out": {
+        "type": "console"
+    },
+    "default": {
+        "type": "dateFile",
+            "filename": "logs/default.log",
+            "pattern": "yyyy-MM-dd",
+            "compress": true,
+            "alwaysIncludePattern": true,
+            "daysToKeep": 15,
+            "keepFileExt": true
+    },
+    "error": {
+        "type": "dateFile",
+            "filename": "logs/error.log",
+            "pattern": "yyyy-MM-dd",
+            "compress": true,
+            "alwaysIncludePattern": true,
+            "daysToKeep": 15,
+            "keepFileExt": true
+    },
+    "maxInfo": {
+        "type": "logLevelFilter",
+            "appender": "default",
+            "level": "debug",
+            "maxLevel": "info"
+    },
+    "minError": {
+        "type": "logLevelFilter",
+            "appender": "error",
+            "level": "error"
+    }
+},
+    "categories": {
+    "default": {
+        "appenders": [
+            "out",
+            "maxInfo",
+            "minError"
+        ],
+            "level": "all",
+            "enableCallStack": true
+    }
+},
+    "replaceConsole": true
+}
