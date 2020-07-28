@@ -3,7 +3,7 @@ const axios = require("axios");
 const service = axios.create({
   baseURL: 'https://bbs.nga.cn', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 20000, // request timeout
+  timeout: 40000, // request timeout
 })
 // request interceptor
 service.interceptors.request.use(

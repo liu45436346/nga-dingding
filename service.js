@@ -10,20 +10,20 @@ const logger = log4js.getLogger('custom-category');
 
 let config = {
     // 当前页数
-    readPage: 243,
+    readPage: 245,
     // 当前条数
-    readRows: 4841,
+    readRows: 4894,
 }
 
 const handleContent = function(res) {
     let currentRows = res.__ROWS
     let currentPage = Math.ceil(currentRows / 20)
-    let currentRow = res.__R__ROWS
-    let cod1 = config.readRows < currentRows && config.readPage === currentPage
-    let cod2 = config.readPage < currentPage  && config.readPage < currentPage
+    let cod1 = config.readRows < currentRows + 1 && config.readPage === currentPage
+    let cod2 = config.readRows < currentRows + 1 && config.readPage < currentPage
     if (cod1) {
-        config.readRows = currentRows
-        return getContent(res)
+        let row = (config.readRows % 20) - 1
+        config.readRows += 1
+        return getContent(res, row)
     } else if (cod2) {
         config.readPage = currentPage
         getReplyListData()
@@ -32,10 +32,9 @@ const handleContent = function(res) {
     }
 }
 
-const getContent = function(res) {
+const getContent = function(res, row) {
     let __R = res.__R
-    let le = res.__R.length
-    let R = __R[le - 1]
+    let R = __R[row]
     return R.content
 }
 
@@ -53,11 +52,14 @@ const handleResponse = function(res) {
     let content = handleContent(res)
     if (content) {
         let sendData = creatSendData(content)
-        sendDataByDingDing(sendData).then(response => {
-        }).catch(err => {
-            logger.error('error', err);
-        })
+        getSendDataByDingDing(sendData)
     }
+}
+const getSendDataByDingDing = function (data) {
+    sendDataByDingDing(data).then(response => {
+    }).catch(err => {
+        logger.error('error', err);
+    })
 }
 
 const getReplyListData = function() {
