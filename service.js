@@ -12,7 +12,7 @@ let config = {
     // 当前页数
     currentPage: 253,
     // 当前条数
-    currentRows: 5042,
+    currentRows: 5044,
 }
 
 const updateConfig = function () {
@@ -119,7 +119,6 @@ const handleResponse = function(res) {
     let content = handleContent(res)
     if (content) {
         let sendData = creatSendData(content)
-        console.log('sendData', sendData)
         getSendDataByDingDing(sendData)
     }
 }
