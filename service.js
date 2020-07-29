@@ -10,26 +10,32 @@ const logger = log4js.getLogger('custom-category');
 
 let config = {
     // 当前页数
-    readPage: 245,
+    currentPage: 250,
     // 当前条数
-    readRows: 4894,
+    currentRows: 4988,
+}
+
+const updateConfig = function () {
+    // 发送消息成功, 准备下一次的config
+    let currentRows = config.currentRows
+    if (currentRows % 20 === 0) {
+        config.currentPage += 1
+    }
+    config.currentRows += 1
 }
 
 const handleContent = function(res) {
-    let currentRows = res.__ROWS
-    let currentPage = Math.ceil(currentRows / 20)
-    let cod1 = config.readRows < currentRows + 1 && config.readPage === currentPage
-    let cod2 = config.readRows < currentRows + 1 && config.readPage < currentPage
-    if (cod1) {
-        let row = (config.readRows % 20) - 1
-        config.readRows += 1
-        return getContent(res, row)
-    } else if (cod2) {
-        config.readPage = currentPage
-        getReplyListData()
-    } else {
-        return ''
+    let result = ''
+    let totalRows = res.__ROWS
+    let currentRows = config.currentRows
+    let currentRow = currentRows % 20
+    if (currentRow === 0) {
+        currentRow = 20
     }
+    if (currentRows < totalRows + 1) {
+        result = getContent(res, currentRow -1)
+    }
+    return  result
 }
 
 const getContent = function(res, row) {
@@ -39,6 +45,7 @@ const getContent = function(res, row) {
 }
 
 const creatSendData = function(content) {
+    content = `currentPage:${config.currentPage}currentRows:${config.currentRows}_____${content}`
     let r = {
         "msgtype": "text",
         "text": {
@@ -57,13 +64,16 @@ const handleResponse = function(res) {
 }
 const getSendDataByDingDing = function (data) {
     sendDataByDingDing(data).then(response => {
+        console.log('response', response)
+        console.log('response', response)
+        updateConfig()
     }).catch(err => {
         logger.error('error', err);
     })
 }
 
 const getReplyListData = function() {
-    let page = config.readPage
+    let page = config.currentPage
     getReplyList(page).then(response => {
         handleResponse(response)
     }).catch(err => {
