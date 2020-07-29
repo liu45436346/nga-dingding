@@ -12,7 +12,7 @@ let config = {
     // 当前页数
     currentPage: 253,
     // 当前条数
-    currentRows: 5041,
+    currentRows: 5042,
 }
 
 const updateConfig = function () {
@@ -64,7 +64,25 @@ const cutString = function(content, str1, str2) {
     return r
 }
 
+const handleImage = function (content) {
+    let img1 = new RegExp('\\[img\\].', 'g')
+    let img2 = new RegExp('\\[/img\\]', 'g')
+    content = content.replace(img1,' ![img](https://img.nga.178.com/attachments')
+    content = content.replace(img2,')')
+    return content
+}
+
+const handleLink = function (content) {
+    let img1 = new RegExp('\\[link\\].', 'g')
+    let img2 = new RegExp('\\[/link\\]', 'g')
+    content = content.replace(img1,' ![link](')
+    content = content.replace(img2,')')
+    return content
+}
+
 const transformationContentType = function(content) {
+    content = handleImage(content)
+    // content = handleLink(content)
     let quote = cutString(content, '[quote]', '[/quote]')
     let replyContent = ''
     let r = ''
@@ -80,15 +98,17 @@ const transformationContentType = function(content) {
         replyContent = content.replace(br, '/n')
         r = `${replyContent}`
     }
-    console.log('r', r)
+    let title = `### 当前页:${config.currentPage}当前条:${config.currentRows}`
+    r = `${title} \n ${r}`
     return r
 }
 const creatSendData = function(content) {
     let text = transformationContentType(content)
+    let title = `当前页:${config.currentPage}当前条:${config.currentRows}`
     let r = {
         "msgtype": "markdown",
         "markdown": {
-            "title":`当前页:${config.currentPage}当前条:${config.currentRows}`,
+            "title": title,
             "text": text
         },
     }
