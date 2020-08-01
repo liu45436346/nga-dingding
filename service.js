@@ -10,9 +10,9 @@ const logger = log4js.getLogger('custom-category');
 
 let config = {
     // 当前页数
-    currentPage: 253,
+    currentPage: 269,
     // 当前条数
-    currentRows: 5044,
+    currentRows: 5371,
 }
 
 const updateConfig = function () {
@@ -30,10 +30,10 @@ const handleContent = function(res) {
     let currentRows = config.currentRows
     let currentRow = currentRows % 20
     if (currentRow === 0) {
-        currentRow = 20
+        currentRow = res.__R.length
     }
     if (currentRows < totalRows + 1) {
-        result = getContent(res, currentRow -1)
+        result = getContent(res, currentRow - 1)
     }
     return  result
 }
@@ -42,7 +42,9 @@ const handleContent = function(res) {
 const getContent = function(res, row) {
     let __R = res.__R
     let R = __R[row]
-    return R.content
+    if (R) {
+        return R.content
+    }
 }
 
 const cutString = function(content, str1, str2) {
@@ -65,10 +67,12 @@ const cutString = function(content, str1, str2) {
 }
 
 const handleImage = function (content) {
-    let img1 = new RegExp('\\[img\\].', 'g')
+    let img1 = new RegExp('\\[img]\\.', 'g')
     let img2 = new RegExp('\\[/img\\]', 'g')
-    content = content.replace(img1,' ![img](https://img.nga.178.com/attachments')
+    let img3 = new RegExp('\\[img\\]', 'g')
+    content = content.replace(img1,'[img]https://img.nga.178.com/attachments')
     content = content.replace(img2,')')
+    content = content.replace(img3,'![img](')
     return content
 }
 
@@ -140,12 +144,15 @@ const getReplyListData = function() {
 }
 
 const  scheduleCronstyle = ()=>{
-    //每分钟的10, 20, 30, 40, 50, 60秒定时执行一次:
+    // 每分钟的10, 20, 30, 40, 50, 60秒定时执行一次:
     let rule = new schedule.RecurrenceRule()
     rule.second = [10, 20, 30, 40, 50, 60]
-    schedule.scheduleJob(rule,()=>{
+    schedule.scheduleJob(rule, ()=>{
         getReplyListData()
     });
 }
 
-scheduleCronstyle();
+const __main = function () {
+    scheduleCronstyle();
+}
+__main()
