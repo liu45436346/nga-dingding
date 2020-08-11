@@ -10,9 +10,9 @@ const logger = log4js.getLogger('custom-category');
 
 let config = {
     // 当前页数
-    currentPage: 269,
+    currentPage: 296,
     // 当前条数
-    currentRows: 5371,
+    currentRows: 5912,
 }
 
 const updateConfig = function () {
@@ -28,9 +28,11 @@ const handleContent = function(res) {
     let result = ''
     let totalRows = res.__ROWS
     let currentRows = config.currentRows
+
     let currentRow = currentRows % 20
     if (currentRow === 0) {
-        currentRow = res.__R.length
+        // currentRow = res.__R__ROWS
+        currentRow = 20
     }
     if (currentRows < totalRows + 1) {
         result = getContent(res, currentRow - 1)
@@ -39,12 +41,27 @@ const handleContent = function(res) {
 }
 
 
-const getContent = function(res, row) {
+const getContent = function(res) {
     let __R = res.__R
-    let R = __R[row]
+    let le = __R.length
+    let lastR = __R[le - 1]
+    let currentLou = config.currentRows - 1
+    let result = ''
+    for (let i = le - 1; i >= 0; i--) {
+        const R = __R[i];
+        if (currentLou === R.lou) {
+            result = R.content
+            break
+        }
+    }
+    if (lastR.lou > currentLou && !result) {
+        result = 'update'
+    }
+    return result
+/*    let R = __R[row]
     if (R) {
         return R.content
-    }
+    }*/
 }
 
 const cutString = function(content, str1, str2) {
@@ -99,7 +116,7 @@ const transformationContentType = function(content) {
         replyContent = cutString(content, '[/quote]').replace(br,'\n')
         r = `#### 回复: ${quoteName}(${quoteTime}) \n> ${quoteContent}${replyContent}`
     } else {
-        replyContent = content.replace(br, '/n')
+        replyContent = content.replace(br, '\n')
         r = `${replyContent}`
     }
     let title = `### 当前页:${config.currentPage}当前条:${config.currentRows}`
@@ -120,8 +137,10 @@ const creatSendData = function(content) {
 }
 
 const handleResponse = function(res) {
-    let content = handleContent(res)
-    if (content) {
+    let content = getContent(res)
+    if (content === 'update') {
+        updateConfig()
+    } else if (content) {
         let sendData = creatSendData(content)
         getSendDataByDingDing(sendData)
     }
