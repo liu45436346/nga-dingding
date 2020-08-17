@@ -10,9 +10,9 @@ const logger = log4js.getLogger('custom-category');
 
 let config = {
     // 当前页数
-    currentPage: 296,
+    currentPage: 323,
     // 当前条数
-    currentRows: 5912,
+    currentRows: 6458,
 }
 
 const updateConfig = function () {
@@ -94,16 +94,16 @@ const handleImage = function (content) {
 }
 
 const handleLink = function (content) {
-    let img1 = new RegExp('\\[link\\].', 'g')
-    let img2 = new RegExp('\\[/link\\]', 'g')
-    content = content.replace(img1,' ![link](')
-    content = content.replace(img2,')')
+    let url1 = new RegExp('\\[url\\]', 'g')
+    let url2 = new RegExp('\\[/url\\]', 'g')
+    content = content.replace(url1,' [link](')
+    content = content.replace(url2,')')
     return content
 }
 
 const transformationContentType = function(content) {
     content = handleImage(content)
-    // content = handleLink(content)
+    content = handleLink(content)
     let quote = cutString(content, '[quote]', '[/quote]')
     let replyContent = ''
     let r = ''

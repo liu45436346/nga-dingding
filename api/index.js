@@ -18,7 +18,7 @@ function getReplyList(page) {
 
 function sendDataByDingDing(data) {
     let query = {
-        access_token: '6a3627863e2a6d2ccaa74eea1fd161bf8e86edcf80eda95389133e2703cf4dcd',
+        access_token: '8b4d43a3b9b146445e9433b269ebe6990beb645c5206ae89eb0828e566acadf6',
     }
     return request({
         baseURL: 'https://oapi.dingtalk.com',
