@@ -3,7 +3,7 @@ const request = require("../utils/request");
 
 function getReplyList(page) {
     let query = {
-        tid: 21729074,
+        tid: 24929177,
         authorid: 60002731,
         page: page,
         __output: 11,

@@ -10,9 +10,9 @@ const logger = log4js.getLogger('custom-category');
 
 let config = {
     // 当前页数
-    currentPage: 323,
+    currentPage: 1,
     // 当前条数
-    currentRows: 6458,
+    currentRows: 1,
 }
 
 const updateConfig = function () {
